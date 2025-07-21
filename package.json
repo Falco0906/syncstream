@@ -1,0 +1,26 @@
+{
+  "name": "syncstream-video-app",
+  "version": "1.0.0",
+  "description": "Real-time synchronized video streaming application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "video",
+    "streaming",
+    "sync",
+    "realtime",
+    "websocket"
+  ],
+  "author": "SyncStream",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.8.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

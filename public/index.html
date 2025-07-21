@@ -1,0 +1,82 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title> 🌐 SyncStream</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base href="/" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div id="top-bar">
+  <div id="branding">
+    <span class="logo">🎬 SyncStream</span>
+  </div>
+  <div id="nav-links">
+    <a href="https://github.com/Falco0906" target="_blank" class="github-btn">My GitHub</a>
+  </div>
+</div>
+  
+  <div id="container">
+    <!-- Home Page Section -->
+     <div id="home-section">
+  <div class="welcome-box">
+    <h2>Welcome to SyncStream</h2>
+    <p>Watch movies and videos together with friends, no matter where you are.</p>
+    <button id="create-room-btn">Create New Room</button>
+  </div>
+</div>
+
+
+    <!-- Room Page Section -->
+    <div id="room-section" class="hidden">
+      <div id="room-info">
+        <p><strong>Room:</strong> <span id="current-room-id"></span></p>
+        <p><strong>Your name:</strong> <span id="your-username"></span></p>
+        <p><strong>Users in room:</strong> <span id="user-count">1</span></p>
+      </div>
+
+      <div id="video-section">
+  <div id="video-inputs">
+    <input type="text" id="video-url-input" placeholder="Paste YouTube or direct video URL" style="width:60%;">
+    <button id="load-url-btn">Load URL</button>
+    <input type="file" id="file-input" accept="video/*">
+    <button id="upload-btn">Upload</button>
+    <progress id="upload-progress" value="0" max="100" style="width:100%; display:none;"></progress>
+  </div>
+
+  <!-- Native Video Player -->
+  <video id="video" controls style="display:none;"></video>
+
+  <!-- YouTube Iframe Container (dynamically populated) -->
+  <div id="yt-frame" style="width:100%; height:360px; display:none;"></div>
+
+  <!-- Video Control Buttons -->
+  <div id="video-controls">
+    <button id="play-btn">Play</button>
+    <button id="pause-btn">Pause</button>
+    <button id="skip-btn">Skip 10s</button>
+  </div>
+</div>
+
+
+      <div id="chat">
+        <h3>Room Chat</h3>
+        <div id="chat-messages"></div>
+        <input id="chat-input" type="text" placeholder="Type a message...">
+        <button id="send-chat-btn">Send</button>
+      </div>
+
+      <div id="users">
+        <h4>Users in Room</h4>
+        <ul id="user-list"></ul>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="client.js" type="module"></script>
+</body>
+</html>
