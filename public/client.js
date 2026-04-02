@@ -755,7 +755,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // ----- Chat -----
 document.getElementById('send-chat-btn').onclick = sendChat;
 document.getElementById('chat-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') sendChat();
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChat();
+  }
 });
 function sendChat() {
   const input = document.getElementById('chat-input');
@@ -767,7 +770,15 @@ function sendChat() {
 socket.on('chat-message', data => {
   const chatBox = document.getElementById('chat-messages');
   const div = document.createElement('div');
-  div.innerHTML = `<span class="chat-username">${data.username}</span>: ${data.message}`;
+  const username = document.createElement('span');
+  username.className = 'chat-username';
+  username.textContent = data.username;
+
+  const message = document.createElement('span');
+  message.textContent = data.message;
+
+  div.appendChild(username);
+  div.appendChild(message);
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 });

@@ -41,6 +41,7 @@ a {
 
 button,
 input,
+textarea,
 progress {
   font: inherit;
 }
@@ -302,9 +303,14 @@ input[type="file"],
   font-size: 0.95rem;
 }
 
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: rgba(24, 23, 15, 0.28);
   letter-spacing: 0.12em;
+}
+
+textarea {
+  resize: none;
 }
 
 .secondary-cta {
@@ -642,6 +648,8 @@ input::placeholder {
   border-radius: 0 12px 12px 12px;
   line-height: 1.5;
   color: rgba(24, 23, 15, 0.82);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .chat-username {
@@ -658,11 +666,18 @@ input::placeholder {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px;
-  align-items: center;
+  align-items: end;
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: rgba(255, 251, 244, 0.7);
+}
+
+#chat-input {
+  min-height: 94px;
+  max-height: 94px;
+  overflow-y: auto;
+  line-height: 1.45;
 }
 
 progress {
