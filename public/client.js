@@ -471,20 +471,60 @@ function getRoomIdFromUrl() {
   return match ? match[1] : null;
 }
 function isYouTubeUrl(url) {
-  return /youtu\.?be/.test(url);
+  return Boolean(extractYouTubeId(url));
 }
 function extractYouTubeId(url) {
-  const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|.*[?&]v=))([^"&?/ ]{11})/i;
-  const match = url.match(regex);
-  return match ? match[1] : null;
+  if (!url) return null;
+
+  try {
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.replace(/^www\./, '').toLowerCase();
+
+    if (hostname === 'youtu.be') {
+      const shortId = parsedUrl.pathname.split('/').filter(Boolean)[0];
+      return shortId && /^[a-zA-Z0-9_-]{11}$/.test(shortId) ? shortId : null;
+    }
+
+    if (hostname === 'youtube.com' || hostname.endsWith('.youtube.com')) {
+      const videoParam = parsedUrl.searchParams.get('v');
+      if (videoParam && /^[a-zA-Z0-9_-]{11}$/.test(videoParam)) {
+        return videoParam;
+      }
+
+      const pathParts = parsedUrl.pathname.split('/').filter(Boolean);
+      const candidateId = ['embed', 'v', 'shorts'].includes(pathParts[0]) ? pathParts[1] : null;
+      return candidateId && /^[a-zA-Z0-9_-]{11}$/.test(candidateId) ? candidateId : null;
+    }
+  } catch (error) {
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?.*v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/i);
+    return match ? match[1] : null;
+  }
+
+  return null;
+}
+function getMediaType(url) {
+  return isYouTubeUrl(url) ? 'youtube' : 'file';
 }
 function buildMediaFromUrl(url) {
-  if (isYouTubeUrl(url)) {
+  const mediaType = getMediaType(url);
+
+  if (mediaType === 'youtube') {
     const videoId = extractYouTubeId(url);
     return videoId ? { type: 'youtube', url, videoId } : null;
   }
 
   return { type: 'file', url };
+}
+function normalizeMedia(media) {
+  if (!media?.url) return null;
+
+  const normalizedMedia = buildMediaFromUrl(media.url);
+  if (!normalizedMedia) return null;
+
+  return {
+    ...media,
+    ...normalizedMedia
+  };
 }
 function copyRoomLink() {
   const input = document.getElementById('room-link');
@@ -555,9 +595,7 @@ socket.on('user-count-update', count => {
 socket.on('room-state', data => {
   updateUserList(data.users);
   if (data.currentVideo) {
-    const media = data.currentVideo.type
-      ? data.currentVideo
-      : buildMediaFromUrl(data.currentVideo.url);
+    const media = normalizeMedia(data.currentVideo);
 
     if (!media) {
       return;
@@ -593,7 +631,7 @@ socket.on('video-sync', data => {
 });
 
 socket.on('video-loaded', videoInfo => {
-  const media = videoInfo.type ? videoInfo : buildMediaFromUrl(videoInfo.url);
+  const media = normalizeMedia(videoInfo);
   if (!media) return;
   playerManager.loadMedia(media);
 });
@@ -628,7 +666,7 @@ document.getElementById('load-url-btn').onclick = () => {
 
 // ----- Receive video broadcast from others -----
 socket.on('video-url-shared', videoInfo => {
-  const media = videoInfo.type ? videoInfo : buildMediaFromUrl(videoInfo.url);
+  const media = normalizeMedia(videoInfo);
   if (!media) return;
   playerManager.loadMedia(media);
 });
