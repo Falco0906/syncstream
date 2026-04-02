@@ -92,14 +92,14 @@ progress {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 28px;
+  padding: 16px 24px;
   background: rgba(249, 244, 234, 0.9);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }
 
 .wordmark {
-  font-size: 1.95rem;
+  font-size: 1.7rem;
   font-style: italic;
   font-weight: 800;
   letter-spacing: -0.06em;
@@ -108,10 +108,10 @@ progress {
 #nav-links {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 20px;
   text-transform: uppercase;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 0.92rem;
+  font-size: 0.84rem;
 }
 
 .profile-link {
@@ -121,9 +121,9 @@ progress {
 }
 
 #container {
-  width: min(1240px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 28px 0 120px;
+  padding: 22px 0 112px;
 }
 
 #home-section {
@@ -293,13 +293,13 @@ input[type="text"],
 input[type="file"],
 #chat-input {
   width: 100%;
-  padding: 18px 18px;
+  padding: 14px 16px;
   border: 1px solid rgba(24, 23, 15, 0.08);
   border-radius: 14px;
   background: rgba(243, 238, 230, 0.9);
   color: var(--ink);
   font-family: "IBM Plex Mono", monospace;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 input::placeholder {
@@ -308,13 +308,13 @@ input::placeholder {
 }
 
 .secondary-cta {
-  min-height: 56px;
-  padding: 0 18px;
+  min-height: 48px;
+  padding: 0 16px;
   border-radius: 12px;
   background: var(--olive);
   color: #f7f0e4;
   font-family: "Inter", sans-serif;
-  font-size: 0.98rem;
+  font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -325,11 +325,11 @@ input::placeholder {
 
 .room-shell {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr) 320px;
   grid-template-areas:
     "main chat"
     "sidebar chat";
-  gap: 18px;
+  gap: 16px;
   align-items: start;
 }
 
@@ -338,7 +338,7 @@ input::placeholder {
 .chat-panel {
   min-width: 0;
   min-height: 0;
-  padding: 20px;
+  padding: 16px;
   background: linear-gradient(180deg, rgba(255, 251, 244, 0.95), rgba(243, 236, 226, 0.92));
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
@@ -358,7 +358,7 @@ input::placeholder {
 .chat-head h3,
 .section-head h3 {
   font-family: "Inter", sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   font-weight: 800;
   letter-spacing: -0.04em;
 }
@@ -373,7 +373,7 @@ input::placeholder {
 .room-meta-panel {
   display: grid;
   gap: 10px;
-  padding: 16px;
+  padding: 14px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: rgba(255, 252, 245, 0.72);
@@ -404,7 +404,7 @@ input::placeholder {
 .sidebar-cta {
   margin-top: auto;
   width: 100%;
-  padding: 16px 14px;
+  padding: 14px 12px;
   border-radius: 12px;
   background: linear-gradient(180deg, #ffc61c, #f7bc00);
   color: var(--ink);
@@ -418,7 +418,7 @@ input::placeholder {
   border-top: 6px solid var(--red);
   border-radius: 20px;
   display: grid;
-  gap: 18px;
+  gap: 14px;
 }
 
 .room-main-top {
@@ -427,40 +427,40 @@ input::placeholder {
 
 .live-pill {
   display: inline-flex;
-  padding: 6px 10px;
-  margin-bottom: 10px;
+  padding: 5px 9px;
+  margin-bottom: 8px;
   background: rgba(209, 58, 47, 0.12);
   color: var(--red);
   border-radius: 999px;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   letter-spacing: 0.12em;
 }
 
 .room-title-display {
   font-family: "Inter", sans-serif;
-  font-size: clamp(1.7rem, 2.8vw, 2.4rem);
+  font-size: clamp(1.5rem, 2.5vw, 2.1rem);
   line-height: 1.05;
   letter-spacing: -0.05em;
   max-width: 680px;
 }
 
 .room-subtitle {
-  margin-top: 10px;
+  margin-top: 8px;
   color: rgba(24, 23, 15, 0.58);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   max-width: 760px;
 }
 
 #video-section {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 #video-inputs {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 12px;
+  gap: 10px;
   align-items: stretch;
 }
 
@@ -472,7 +472,7 @@ input::placeholder {
   grid-column: 1 / 2;
   min-width: 180px;
   background: rgba(255, 251, 244, 0.92);
-  padding: 14px;
+  padding: 11px 12px;
 }
 
 #upload-btn {
@@ -521,7 +521,7 @@ input::placeholder {
   width: 100%;
   aspect-ratio: 16 / 9;
   min-height: 0;
-  max-height: 58vh;
+  max-height: 54vh;
   background: #18170f;
 }
 
@@ -534,20 +534,20 @@ input::placeholder {
 #video-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 10px;
+  padding: 12px;
   border-radius: 16px;
   background: rgba(255, 249, 241, 0.72);
   border: 1px solid var(--line);
 }
 
 .transport-btn {
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.78);
   color: var(--ink);
-  font-size: 1.2rem;
+  font-size: 1.05rem;
 }
 
 .transport-btn.active {
@@ -556,7 +556,7 @@ input::placeholder {
 
 .members-panel {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -576,7 +576,7 @@ input::placeholder {
 
 #user-list li {
   min-width: 160px;
-  padding: 14px 14px;
+  padding: 12px;
   border: 1px solid var(--line);
   border-left: 3px solid var(--amber);
   border-radius: 12px;
@@ -604,11 +604,11 @@ input::placeholder {
   border-radius: 20px;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
   position: sticky;
   top: 92px;
-  max-height: calc(100vh - 120px);
+  height: min(700px, calc(100vh - 120px));
 }
 
 .chat-head {
@@ -619,37 +619,37 @@ input::placeholder {
 }
 
 .chat-tag {
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: rgba(247, 188, 0, 0.18);
   border-radius: 10px;
-  font-size: 0.7rem;
+  font-size: 0.66rem;
 }
 
 #chat-messages {
-  min-height: 220px;
-  max-height: none;
+  min-height: 0;
+  height: 100%;
   overflow-y: auto;
-  padding: 6px;
+  padding: 4px;
   display: grid;
   align-content: start;
-  gap: 14px;
+  gap: 10px;
 }
 
 #chat-messages > div {
-  padding: 16px 18px;
+  padding: 12px 14px;
   border-left: 3px solid var(--gold);
   background: rgba(255, 255, 255, 0.44);
-  border-radius: 0 14px 14px 14px;
-  line-height: 1.7;
+  border-radius: 0 12px 12px 12px;
+  line-height: 1.5;
   color: rgba(24, 23, 15, 0.82);
 }
 
 .chat-username {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   color: #9b4518;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
@@ -657,9 +657,9 @@ input::placeholder {
 .chat-compose {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  padding: 14px;
+  padding: 12px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: rgba(255, 251, 244, 0.7);
@@ -738,7 +738,7 @@ body.room-mode #home-section {
     min-height: auto;
     margin-top: 0;
     position: static;
-    max-height: none;
+    height: 420px;
   }
 
   .archive-sidebar,
