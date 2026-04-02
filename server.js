@@ -151,7 +151,8 @@ io.on('connection', (socket) => {
         socket.emit('room-state', {
             users: Array.from(room.users.values()),
             videoState: room.videoState,
-            currentVideo: room.currentVideo
+            currentVideo: room.currentVideo,
+            hostId: room.host
         });
 
         // Notify others in the room about new user
@@ -171,6 +172,7 @@ io.on('connection', (socket) => {
         if (!socket.roomId) return;
         const room = rooms.get(socket.roomId);
         if (room) {
+            if (room.host !== socket.id) return;
             const videoState = {
                 ...data,
                 timestamp: Date.now(),
@@ -182,6 +184,21 @@ io.on('connection', (socket) => {
             socket.to(socket.roomId).emit('video-sync', videoState);
             console.log(`Video ${data.action} by ${socket.username} in room ${socket.roomId}`);
         }
+    });
+
+    socket.on('sync-state', (data) => {
+        if (!socket.roomId) return;
+        const room = rooms.get(socket.roomId);
+        if (!room || room.host !== socket.id) return;
+
+        const syncState = {
+            ...data,
+            timestamp: Date.now(),
+            userId: socket.id,
+            username: socket.username
+        };
+
+        socket.to(socket.roomId).emit('sync-state', syncState);
     });
 
     // Handle when a user loads a video (URL or uploaded file)
