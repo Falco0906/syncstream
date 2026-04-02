@@ -1,81 +1,175 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title> 🌐 SyncStream</title>
+  <title>SyncStream</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <base href="/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
   <canvas id="bg-canvas"></canvas>
-  <div id="top-bar">
-  <div id="branding">
-    <span class="logo">🎬 SyncStream</span>
-  </div>
-  <div id="nav-links">
-    <a href="https://github.com/Falco0906" target="_blank" class="github-btn">My GitHub</a>
-  </div>
-</div>
-  
-  <div id="container">
-    <!-- Home Page Section -->
-     <div id="home-section">
-  <div class="welcome-box">
-    <h2>Welcome to SyncStream</h2>
-    <p>Watch movies and videos together with friends, no matter where you are.</p>
-    <button id="create-room-btn">Create New Room</button>
-  </div>
-</div>
 
-
-    <!-- Room Page Section -->
-    <div id="room-section" class="hidden">
-      <div id="room-info">
-        <p><strong>Room:</strong> <span id="current-room-id"></span></p>
-        <p><strong>Your name:</strong> <span id="your-username"></span></p>
-        <p><strong>Users in room:</strong> <span id="user-count">1</span></p>
-      </div>
-
-      <div id="video-section">
-  <div id="video-inputs">
-    <input type="text" id="video-url-input" placeholder="Paste YouTube or direct video URL" style="width:60%;">
-    <button id="load-url-btn">Load URL</button>
-    <input type="file" id="file-input" accept="video/*">
-    <button id="upload-btn">Upload</button>
-    <progress id="upload-progress" value="0" max="100" style="width:100%; display:none;"></progress>
+  <div class="site-chrome">
+    <div class="chrome-bar chrome-bar-top"></div>
+    <div class="chrome-bar chrome-bar-mid"></div>
+    <div class="chrome-bar chrome-bar-bottom"></div>
   </div>
 
-  <!-- Native Video Player -->
-  <video id="video" controls style="display:none;"></video>
-
-  <!-- YouTube Iframe Container (dynamically populated) -->
-  <div id="yt-frame" style="width:100%; height:360px; display:none;"></div>
-
-  <!-- Video Control Buttons -->
-  <div id="video-controls">
-    <button id="play-btn">Play</button>
-    <button id="pause-btn">Pause</button>
-    <button id="skip-btn">Skip 10s</button>
-  </div>
-</div>
-
-
-      <div id="chat">
-        <h3>Room Chat</h3>
-        <div id="chat-messages"></div>
-        <input id="chat-input" type="text" placeholder="Type a message...">
-        <button id="send-chat-btn">Send</button>
-      </div>
-
-      <div id="users">
-        <h4>Users in Room</h4>
-        <ul id="user-list"></ul>
-      </div>
+  <header id="top-bar">
+    <div id="branding">
+      <span class="wordmark">SyncStream</span>
     </div>
+    <nav id="nav-links">
+      <a href="#home-section">How It Works</a>
+      <a href="#room-section">Room Feed</a>
+      <a href="https://github.com/Falco0906" target="_blank" rel="noreferrer" class="profile-link">Profile</a>
+    </nav>
+  </header>
+
+  <div id="container">
+    <section id="home-section">
+      <div class="hero-band">
+        <p class="eyebrow">Analog soul. Digital speed. Sync your experience.</p>
+        <h1 class="hero-title">SYNCSTREAM</h1>
+      </div>
+
+      <div class="hero-panel">
+        <div class="action-block">
+          <div class="action-label">Action // 01</div>
+          <button id="create-room-btn" class="primary-cta">Create New Room <span aria-hidden="true">→</span></button>
+        </div>
+
+        <div class="action-separator">or</div>
+
+        <div class="action-block">
+          <div class="action-label">Action // 02</div>
+          <div class="join-row">
+            <label class="field-label" for="join-room-code">Room_Code</label>
+            <input type="text" id="join-room-code" placeholder="ENTER_ID_HERE" autocomplete="off" />
+            <button id="join-room-btn" class="secondary-cta">Join</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-rail"></div>
+
+      <div class="feature-grid">
+        <article class="feature-card feature-card-vinyl">
+          <span class="feature-kicker">Feature // Archival Quality</span>
+          <h2>Cinema-Grade Syncing</h2>
+        </article>
+        <article class="feature-card feature-card-headset">
+          <span class="feature-kicker">Feature // Low Latency</span>
+          <h2>Instant Connection</h2>
+        </article>
+      </div>
+    </section>
+
+    <section id="room-section" class="hidden">
+      <div class="room-shell">
+        <aside class="archive-sidebar">
+          <div class="sidebar-brand">
+            <h2>ARCHIVE_CORE</h2>
+            <p>Technical precision</p>
+          </div>
+
+          <div class="sidebar-menu">
+            <div class="menu-item active">Room_Feed</div>
+            <div class="menu-item">Archive</div>
+            <div class="menu-item">Members</div>
+            <div class="menu-item">OSD_Settings</div>
+          </div>
+
+          <div id="room-info" class="room-meta-panel">
+            <p><span class="meta-label">Room</span><span id="current-room-id"></span></p>
+            <p><span class="meta-label">Alias</span><span id="your-username"></span></p>
+            <p><span class="meta-label">Users</span><span id="user-count">1</span></p>
+
+            <div class="room-link-wrap">
+              <label class="field-label" for="room-link">Share_Link</label>
+              <input type="text" id="room-link" readonly />
+              <button id="copy-room-btn" class="secondary-cta">Copy</button>
+            </div>
+          </div>
+
+          <button class="sidebar-cta" id="new-sync-btn" type="button">+ New_Sync</button>
+        </aside>
+
+        <main class="room-main">
+          <div class="room-main-top">
+            <div>
+              <div class="live-pill">LIVE</div>
+              <h2 class="room-title-display">SYNC_ARCHIVE_ROOM</h2>
+              <p class="room-subtitle">Bitrate: 4.2 Mbps / Frame_Rate: 29.97 fps</p>
+            </div>
+            <div class="timecode-block">
+              <div class="timecode-value">01:24:32:04</div>
+              <div class="timecode-label">Master_Timecode</div>
+            </div>
+          </div>
+
+          <div id="video-section">
+            <div id="video-inputs">
+              <input type="text" id="video-url-input" placeholder="Paste YouTube or direct video URL" />
+              <button id="load-url-btn" class="secondary-cta">Load URL</button>
+              <input type="file" id="file-input" accept="video/*" />
+              <button id="upload-btn" class="secondary-cta">Upload</button>
+              <progress id="upload-progress" value="0" max="100" style="display:none;"></progress>
+            </div>
+
+            <div id="media-stage">
+              <video id="video" controls style="display:none;"></video>
+              <div id="yt-frame" style="display:none;"></div>
+            </div>
+
+            <div class="playback-strip"></div>
+
+            <div id="video-controls">
+              <button id="skip-btn" class="transport-btn">≪</button>
+              <button id="play-btn" class="transport-btn">▶</button>
+              <button id="pause-btn" class="transport-btn active">❚❚</button>
+            </div>
+          </div>
+
+          <div id="users" class="members-panel">
+            <div class="section-head">
+              <h3>ACTIVE_MEMBERS</h3>
+              <span>Controller-aware session</span>
+            </div>
+            <ul id="user-list"></ul>
+          </div>
+        </main>
+
+        <aside id="chat" class="chat-panel">
+          <div class="chat-head">
+            <h3>COMM_LOG</h3>
+            <span class="chat-tag">Encrypted</span>
+          </div>
+          <div id="chat-messages"></div>
+          <div class="chat-compose">
+            <input id="chat-input" type="text" placeholder="INPUT_COMMAND_OR_TEXT..." />
+            <button id="send-chat-btn" class="secondary-cta">Send</button>
+          </div>
+        </aside>
+      </div>
+    </section>
   </div>
+
+  <footer class="site-footer">
+    <div class="footer-brand">SYNCSTREAM</div>
+    <div class="footer-copy">© 2024 SyncStream Archivist. Analog soul, digital speed.</div>
+    <div class="footer-links">
+      <a href="#top-bar">Terms</a>
+      <a href="#top-bar">Privacy</a>
+      <a href="#top-bar">Support</a>
+    </div>
+  </footer>
+
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script src="client.js" type="module"></script>
 </body>

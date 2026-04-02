@@ -68,9 +68,13 @@ if (!window.YT) {
 
 // ----- DOM Elements -----
 const createRoomBtn = document.getElementById('create-room-btn');
+const joinRoomBtn = document.getElementById('join-room-btn');
+const joinRoomCodeInput = document.getElementById('join-room-code');
 const homeSection = document.getElementById('home-section');
 const roomSection = document.getElementById('room-section');
 const video = document.getElementById('video');
+const copyRoomBtn = document.getElementById('copy-room-btn');
+const newSyncBtn = document.getElementById('new-sync-btn');
 
 class Html5PlayerAdapter {
   constructor(videoElement) {
@@ -350,7 +354,7 @@ class YouTubePlayerAdapter {
 
 const youtubePlayerAdapter = new YouTubePlayerAdapter({
   videoElement: video,
-  parentElement: document.getElementById('video-section')
+  parentElement: document.getElementById('media-stage')
 });
 
 const playerManager = {
@@ -659,13 +663,68 @@ function normalizeMedia(media) {
 }
 function copyRoomLink() {
   const input = document.getElementById('room-link');
+  if (!input) return;
   input.select();
   document.execCommand('copy');
   alert('Room link copied!');
 }
 
+function getRoomCodeFromInput(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+
+  const fullUrlMatch = trimmed.match(/\/room\/([a-zA-Z0-9]+)/i);
+  if (fullUrlMatch) {
+    return fullUrlMatch[1];
+  }
+
+  return trimmed.replace(/[^a-zA-Z0-9]/g, '');
+}
+
+function joinRoomFromHome() {
+  const roomCode = getRoomCodeFromInput(joinRoomCodeInput?.value || '');
+  if (!roomCode) {
+    alert('Enter a room code to join.');
+    return;
+  }
+
+  window.location.href = `/room/${roomCode}`;
+}
+
+function renderUserListItem(user) {
+  const li = document.createElement('li');
+  li.id = 'user-' + user.userId;
+  li.innerHTML = `
+    <strong>${user.username}</strong>
+    <span>${user.userId === socket.id ? 'Connected / You' : 'Active listener'}</span>
+  `;
+  return li;
+}
+
+function updateUserList(users = []) {
+  const list = document.getElementById('user-list');
+  if (!list) return;
+  list.innerHTML = '';
+  users.forEach((user) => {
+    list.appendChild(renderUserListItem(user));
+  });
+}
+
 // Home page create room
 createRoomBtn?.addEventListener('click', async () => {
+  const res = await fetch('/api/create-room');
+  const { roomId } = await res.json();
+  window.location.href = `/room/${roomId}`;
+});
+
+joinRoomBtn?.addEventListener('click', joinRoomFromHome);
+joinRoomCodeInput?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    joinRoomFromHome();
+  }
+});
+copyRoomBtn?.addEventListener('click', copyRoomLink);
+newSyncBtn?.addEventListener('click', async () => {
   const res = await fetch('/api/create-room');
   const { roomId } = await res.json();
   window.location.href = `/room/${roomId}`;
@@ -678,6 +737,10 @@ document.addEventListener('DOMContentLoaded', () => {
     homeSection?.classList.add('hidden');
     roomSection?.classList.remove('hidden');
     document.getElementById('current-room-id').textContent = roomId;
+    const roomLinkInput = document.getElementById('room-link');
+    if (roomLinkInput) {
+      roomLinkInput.value = window.location.href;
+    }
     document.getElementById('room-controls')?.classList.add('hidden');
     document.getElementById('room-info')?.classList.remove('hidden');
 
@@ -711,9 +774,7 @@ socket.on('chat-message', data => {
 // ----- User Join/Leave -----
 socket.on('user-joined', (data) => {
   const list = document.getElementById('user-list');
-  const li = document.createElement('li');
-  li.textContent = `${data.username}`;
-  li.id = 'user-' + data.userId;
+  const li = renderUserListItem(data);
   list.appendChild(li);
 });
 socket.on('user-left', (data) => {
@@ -827,7 +888,7 @@ function loadYouTubeVideo(url, seekTime = 0, action = null) {
   ytFrame.style.width = '100%';
   ytFrame.style.height = '360px';
   ytFrame.style.display = 'block';
-  document.getElementById('video-section').appendChild(ytFrame);
+  document.getElementById('media-stage').appendChild(ytFrame);
 
   // Create new YouTube player
   ytPlayer = new YT.Player('yt-frame', {
