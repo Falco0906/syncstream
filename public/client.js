@@ -420,6 +420,8 @@ const syncController = {
   currentController: null,
   lastControlTime: 0,
   CONTROL_TIMEOUT: 2000,
+  timelineSyncInterval: null,
+  timelineSyncMs: 2000,
 
   init(nextSocket, nextPlayerManager) {
     this.socket = nextSocket;
@@ -436,6 +438,8 @@ const syncController = {
         if (!this.suppressEvents) this.handleLocalSeek(time);
       }
     });
+
+    this.startTimelineSync();
   },
 
   handleLocalPlay() {
@@ -535,6 +539,60 @@ const syncController = {
     }
 
     this.socket.emit('video-action', { action, currentTime: time });
+  },
+
+  startTimelineSync() {
+    if (this.timelineSyncInterval) {
+      window.clearInterval(this.timelineSyncInterval);
+    }
+
+    this.timelineSyncInterval = window.setInterval(() => {
+      if (!this.socket || !roomId) return;
+      if (this.currentController !== this.socket.id) return;
+      if (this.currentState !== 'playing') return;
+
+      this.socket.emit('sync-state', {
+        time: this.playerManager.getCurrentTime(),
+        state: 'playing'
+      });
+    }, this.timelineSyncMs);
+  },
+
+  applySyncState(payload) {
+    if (!payload) return;
+
+    const incomingTime = typeof payload.currentTime === 'number' ? payload.currentTime : payload.time;
+    if (typeof incomingTime !== 'number') return;
+
+    const diff = Math.abs(this.playerManager.getCurrentTime() - incomingTime);
+    if (diff <= this.driftThreshold) return;
+
+    const activePlayer = this.playerManager.getActivePlayer();
+
+    this.suppressEvents = true;
+
+    try {
+      const applyCorrection = () => {
+        if (payload.state === 'paused') {
+          this.currentState = 'paused';
+          this.playerManager.pause();
+          this.playerManager.seek(incomingTime);
+          return;
+        }
+
+        this.playerManager.seek(incomingTime);
+      };
+
+      if (typeof activePlayer?.withSuppressedEvents === 'function') {
+        activePlayer.withSuppressedEvents(applyCorrection);
+      } else {
+        applyCorrection();
+      }
+    } finally {
+      window.setTimeout(() => {
+        this.suppressEvents = false;
+      }, 0);
+    }
   }
 };
 
@@ -701,6 +759,10 @@ document.getElementById('skip-btn').onclick = () => {
 
 socket.on('video-sync', data => {
   syncController.applyRemoteAction(data);
+});
+
+socket.on('sync-state', data => {
+  syncController.applySyncState(data);
 });
 
 socket.on('video-loaded', videoInfo => {

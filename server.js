@@ -185,6 +185,18 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('sync-state', (data) => {
+        if (!socket.roomId) return;
+
+        socket.to(socket.roomId).emit('sync-state', {
+            ...data,
+            senderId: socket.id,
+            userId: socket.id,
+            username: socket.username,
+            timestamp: Date.now()
+        });
+    });
+
     // Handle when a user loads a video (URL or uploaded file)
     socket.on('video-loaded', (videoInfo) => {
         if (!socket.roomId) return;
