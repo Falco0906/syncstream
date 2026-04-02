@@ -101,6 +101,10 @@ class Html5PlayerAdapter {
     return this.videoElement.currentTime;
   }
 
+  isPlaying() {
+    return !this.videoElement.paused && !this.videoElement.ended;
+  }
+
   destroy() {
     this.pause();
     this.videoElement.removeAttribute('src');
@@ -151,6 +155,7 @@ class YouTubePlayerAdapter {
     this.lastTimeSample = 0;
     this.lastTimeSampleAt = 0;
     this.suppressNextEvent = false;
+    this.currentState = null;
   }
 
   load({ videoId }) {
@@ -219,6 +224,10 @@ class YouTubePlayerAdapter {
     return this.player.getCurrentTime();
   }
 
+  isPlaying() {
+    return this.currentState === YT.PlayerState.PLAYING;
+  }
+
   destroy() {
     this.stopSeekPolling();
     this.pendingCommands = [];
@@ -276,6 +285,8 @@ class YouTubePlayerAdapter {
   }
 
   handleStateChange(event) {
+    this.currentState = event.data;
+
     if (this.suppressNextEvent) {
       this.suppressNextEvent = false;
       this.captureTimeSample();
@@ -309,9 +320,9 @@ class YouTubePlayerAdapter {
       const expectedTime = this.lastTimeSample + elapsedSeconds;
       const drift = Math.abs(currentTime - expectedTime);
 
-      if (drift > 1.25) {
+      if (drift > 1) {
         this.captureTimeSample(currentTime, now);
-        this.boundHandlers.onSeek?.();
+        this.boundHandlers.onSeek?.(currentTime);
         return;
       }
 
@@ -397,6 +408,9 @@ const syncController = {
   socket: null,
   playerManager: null,
   suppressEvents: false,
+  lastSyncTime: 0,
+  driftThreshold: 1,
+  syncCooldownMs: 1000,
 
   init(nextSocket, nextPlayerManager) {
     this.socket = nextSocket;
@@ -428,23 +442,52 @@ const syncController = {
     this.sendAction('seek', currentTime);
   },
 
+  canSync() {
+    return Date.now() - this.lastSyncTime > this.syncCooldownMs;
+  },
+
   applyRemoteAction(payload) {
     if (!payload) return;
 
     const currentTime = typeof payload.currentTime === 'number' ? payload.currentTime : payload.time;
     const activePlayer = this.playerManager.getActivePlayer();
+    const currentPlayerTime = this.playerManager.getCurrentTime();
+    const diff = typeof currentTime === 'number' ? Math.abs(currentPlayerTime - currentTime) : 0;
+    const isPlaying = typeof activePlayer?.isPlaying === 'function' ? activePlayer.isPlaying() : false;
 
     this.suppressEvents = true;
 
     try {
-      if (typeof currentTime === 'number' && Math.abs(this.playerManager.getCurrentTime() - currentTime) > 0.5) {
-        this.playerManager.seek(currentTime);
+      if (payload.action === 'seek') {
+        if (typeof currentTime !== 'number' || diff < this.driftThreshold) {
+          return;
+        }
       }
 
       const applyAction = () => {
-        if (payload.action === 'play') this.playerManager.play();
-        if (payload.action === 'pause') this.playerManager.pause();
-        if (payload.action === 'seek' && typeof currentTime === 'number') this.playerManager.seek(currentTime);
+        if (payload.action === 'play') {
+          if (isPlaying && diff < this.driftThreshold) {
+            return;
+          }
+
+          if (typeof currentTime === 'number' && diff >= this.driftThreshold) {
+            this.playerManager.seek(currentTime);
+          }
+
+          this.playerManager.play();
+        }
+
+        if (payload.action === 'pause') {
+          if (typeof currentTime === 'number' && diff >= this.driftThreshold) {
+            this.playerManager.seek(currentTime);
+          }
+
+          this.playerManager.pause();
+        }
+
+        if (payload.action === 'seek' && typeof currentTime === 'number' && diff >= this.driftThreshold) {
+          this.playerManager.seek(currentTime);
+        }
       };
 
       if (typeof activePlayer?.withSuppressedEvents === 'function') {
@@ -461,6 +504,9 @@ const syncController = {
 
   sendAction(action, time) {
     if (!this.socket || !roomId) return;
+    if (!this.canSync()) return;
+
+    this.lastSyncTime = Date.now();
     this.socket.emit('video-action', { action, currentTime: time });
   }
 };
