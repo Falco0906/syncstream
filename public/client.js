@@ -470,51 +470,24 @@ const syncController = {
     const activePlayer = this.playerManager.getActivePlayer();
     const currentPlayerTime = this.playerManager.getCurrentTime();
     const diff = typeof currentTime === 'number' ? Math.abs(currentPlayerTime - currentTime) : 0;
-    const isPlaying = typeof activePlayer?.isPlaying === 'function' ? activePlayer.isPlaying() : false;
 
     this.suppressEvents = true;
 
     try {
-      if (payload.action === 'pause') {
-        this.currentState = 'paused';
-
-        if (typeof activePlayer?.withSuppressedEvents === 'function') {
-          activePlayer.withSuppressedEvents(() => {
-            this.playerManager.pause();
-          });
-        } else {
-          this.playerManager.pause();
-        }
-
-        return;
-      }
-
-      if (this.currentState === 'paused' && (payload.action === 'play' || payload.action === 'seek')) {
-        return;
-      }
-
-      if (payload.action === 'seek') {
-        if (typeof currentTime !== 'number' || diff < this.driftThreshold) {
-          return;
-        }
-      }
-
       const applyAction = () => {
         if (payload.action === 'play') {
           this.currentState = 'playing';
-
-          if (isPlaying && diff < this.driftThreshold) {
-            return;
-          }
-
-          if (typeof currentTime === 'number' && diff >= this.driftThreshold) {
-            this.playerManager.seek(currentTime);
-          }
-
           this.playerManager.play();
+          return;
         }
 
-        if (payload.action === 'seek' && typeof currentTime === 'number' && diff >= this.driftThreshold) {
+        if (payload.action === 'pause') {
+          this.currentState = 'paused';
+          this.playerManager.pause();
+          return;
+        }
+
+        if (payload.action === 'seek' && typeof currentTime === 'number' && diff > this.driftThreshold) {
           this.playerManager.seek(currentTime);
         }
       };
