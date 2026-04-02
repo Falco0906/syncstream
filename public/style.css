@@ -331,11 +331,11 @@ textarea {
 
 .room-shell {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr) 340px;
   grid-template-areas:
     "main chat"
     "sidebar chat";
-  gap: 16px;
+  gap: 0;
   align-items: start;
 }
 
@@ -345,19 +345,21 @@ textarea {
   min-width: 0;
   min-height: 0;
   padding: 16px;
-  background: linear-gradient(180deg, rgba(255, 251, 244, 0.95), rgba(243, 236, 226, 0.92));
+  background: rgba(251, 247, 239, 0.98);
   border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  box-shadow: none;
   overflow: hidden;
 }
 
 .archive-sidebar {
   grid-area: sidebar;
-  border-top: 6px solid var(--gold);
-  border-radius: 20px;
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  border-top: 0;
+  border-right: 0;
   display: grid;
   align-content: start;
-  gap: 16px;
+  gap: 14px;
 }
 
 .sidebar-brand h2,
@@ -379,10 +381,10 @@ textarea {
 .room-meta-panel {
   display: grid;
   gap: 10px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: rgba(255, 252, 245, 0.72);
+  padding: 14px 0 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
 }
 
 .room-meta-panel p {
@@ -411,7 +413,7 @@ textarea {
   margin-top: auto;
   width: 100%;
   padding: 14px 12px;
-  border-radius: 12px;
+  border-radius: 10px;
   background: linear-gradient(180deg, #ffc61c, #f7bc00);
   color: var(--ink);
   font-family: "Inter", sans-serif;
@@ -421,8 +423,10 @@ textarea {
 
 .room-main {
   grid-area: main;
-  border-top: 6px solid var(--red);
-  border-radius: 20px;
+  border-top: 4px solid var(--red);
+  border-radius: 16px 0 0 0;
+  border-right: 0;
+  border-bottom: 0;
   display: grid;
   gap: 14px;
 }
@@ -448,7 +452,7 @@ textarea {
   font-size: clamp(1.5rem, 2.5vw, 2.1rem);
   line-height: 1.05;
   letter-spacing: -0.05em;
-  max-width: 680px;
+  max-width: 760px;
 }
 
 .room-subtitle {
@@ -465,7 +469,7 @@ textarea {
 
 #video-inputs {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: stretch;
 }
@@ -476,7 +480,7 @@ textarea {
 
 #file-input {
   grid-column: 1 / 2;
-  min-width: 180px;
+  min-width: 0;
   background: rgba(255, 251, 244, 0.92);
   padding: 11px 12px;
 }
@@ -485,40 +489,47 @@ textarea {
   grid-column: 2 / 3;
 }
 
+#load-url-btn {
+  grid-column: 2 / 3;
+}
+
+#video-url-input,
+#file-input {
+  border-radius: 10px;
+}
+
 #upload-progress {
   grid-column: 1 / -1;
 }
 
 #media-stage {
   position: relative;
-  background: #30281a;
-  border: 1px solid rgba(35, 29, 18, 0.2);
-  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(20, 19, 16, 0.96), rgba(30, 27, 20, 0.98)),
+    radial-gradient(circle at center, rgba(255, 213, 74, 0.08), transparent 50%);
+  border: 1px solid rgba(35, 29, 18, 0.16);
+  border-radius: 12px;
   overflow: hidden;
-  min-height: 0;
+  min-height: 360px;
+  aspect-ratio: 16 / 9;
   display: grid;
   place-items: center;
 }
 
-#media-stage::before,
-#media-stage::after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
 #media-stage::before {
-  top: 22px;
-  left: 22px;
-  border-right: none;
-  border-bottom: none;
+  content: "Load a YouTube link or upload a file to start watching.";
+  position: absolute;
+  inset: auto 24px 24px 24px;
+  color: rgba(247, 240, 228, 0.76);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
 }
 
-#media-stage::after {
-  right: 22px;
-  bottom: 22px;
-  border-left: none;
-  border-top: none;
+#media-stage.has-media::before {
+  display: none;
 }
 
 #video,
@@ -527,13 +538,14 @@ textarea {
   width: 100%;
   aspect-ratio: 16 / 9;
   min-height: 0;
-  max-height: 54vh;
+  height: 100%;
+  max-height: 56vh;
   background: #18170f;
 }
 
 .playback-strip {
-  height: 8px;
-  border-radius: 999px;
+  height: 6px;
+  border-radius: 0;
   background: linear-gradient(90deg, #d6404d 0 8%, #f0a531 8% 18%, var(--gold) 18% 100%);
 }
 
@@ -541,19 +553,20 @@ textarea {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
-  border-radius: 16px;
-  background: rgba(255, 249, 241, 0.72);
-  border: 1px solid var(--line);
+  padding: 10px 0 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
 }
 
 .transport-btn {
   width: 52px;
   height: 52px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.78);
+  border-radius: 10px;
+  background: #fff;
   color: var(--ink);
   font-size: 1.05rem;
+  box-shadow: none;
 }
 
 .transport-btn.active {
@@ -585,8 +598,8 @@ textarea {
   padding: 12px;
   border: 1px solid var(--line);
   border-left: 3px solid var(--amber);
-  border-radius: 12px;
-  background: rgba(255, 252, 245, 0.9);
+  border-radius: 8px;
+  background: #fff;
   font-family: "IBM Plex Mono", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -606,8 +619,8 @@ textarea {
 
 .chat-panel {
   grid-area: chat;
-  border-top: 6px solid var(--gold);
-  border-radius: 20px;
+  border-top: 4px solid var(--gold);
+  border-radius: 0 16px 16px 0;
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 12px;
@@ -642,10 +655,11 @@ textarea {
 }
 
 #chat-messages > div {
-  padding: 12px 14px;
-  border-left: 3px solid var(--gold);
-  background: rgba(255, 255, 255, 0.44);
-  border-radius: 0 12px 12px 12px;
+  padding: 10px 0 12px;
+  border-left: 0;
+  border-bottom: 1px solid rgba(35, 29, 18, 0.08);
+  background: transparent;
+  border-radius: 0;
   line-height: 1.5;
   color: rgba(24, 23, 15, 0.82);
   white-space: pre-wrap;
@@ -667,10 +681,10 @@ textarea {
   grid-template-columns: 1fr auto;
   gap: 10px;
   align-items: end;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(255, 251, 244, 0.7);
+  padding: 12px 0 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
 }
 
 #chat-input {
@@ -678,6 +692,8 @@ textarea {
   max-height: 94px;
   overflow-y: auto;
   line-height: 1.45;
+  border-radius: 10px;
+  background: #fff;
 }
 
 progress {
@@ -761,6 +777,8 @@ body.room-mode #home-section {
   .chat-panel {
     width: 100%;
     padding: 14px;
+    border-right: 1px solid var(--line);
+    border-radius: 14px;
   }
 
   .chat-panel {
@@ -778,13 +796,21 @@ body.room-mode #home-section {
   }
 
   #video-inputs {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr auto;
   }
 
   #file-input,
+  #video-url-input {
+    grid-column: 1 / 2;
+  }
+
   #upload-btn,
+  #load-url-btn {
+    grid-column: 2 / 3;
+  }
+
   #upload-progress {
-    grid-column: auto;
+    grid-column: 1 / -1;
   }
 
   #video,
@@ -828,6 +854,18 @@ body.room-mode #home-section {
 
   .room-shell {
     max-width: none;
+  }
+
+  #video-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  #load-url-btn,
+  #upload-btn,
+  #file-input,
+  #video-url-input,
+  #upload-progress {
+    grid-column: auto;
   }
 
   .room-title-display {

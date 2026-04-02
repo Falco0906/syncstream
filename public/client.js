@@ -75,6 +75,11 @@ const roomSection = document.getElementById('room-section');
 const video = document.getElementById('video');
 const copyRoomBtn = document.getElementById('copy-room-btn');
 const newSyncBtn = document.getElementById('new-sync-btn');
+const mediaStage = document.getElementById('media-stage');
+
+function setMediaStageLoaded(hasMedia) {
+  mediaStage?.classList.toggle('has-media', Boolean(hasMedia));
+}
 
 class Html5PlayerAdapter {
   constructor(videoElement) {
@@ -87,6 +92,7 @@ class Html5PlayerAdapter {
     this.videoElement.style.display = 'block';
     this.videoElement.src = nextSource;
     this.videoElement.load();
+    setMediaStageLoaded(Boolean(nextSource));
   }
 
   play() {
@@ -170,6 +176,7 @@ class YouTubePlayerAdapter {
     this.videoElement.style.display = 'none';
     const container = this.ensureContainer();
     container.style.display = 'block';
+    setMediaStageLoaded(Boolean(videoId));
 
     return loadYouTubeApi().then(() => {
       if (this.player) {
