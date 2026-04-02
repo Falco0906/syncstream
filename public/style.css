@@ -740,12 +740,27 @@ body.room-mode #home-section {
 }
 
 @media (max-width: 1180px) {
+  #container {
+    width: min(100%, calc(100% - 24px));
+    padding: 18px 0 72px;
+  }
+
   .room-shell {
     grid-template-columns: 1fr;
     grid-template-areas:
       "main"
       "sidebar"
       "chat";
+    gap: 12px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .archive-sidebar,
+  .room-main,
+  .chat-panel {
+    width: 100%;
+    padding: 14px;
   }
 
   .chat-panel {
@@ -753,12 +768,33 @@ body.room-mode #home-section {
     min-height: auto;
     margin-top: 0;
     position: static;
-    height: 420px;
+    height: auto;
   }
 
-  .archive-sidebar,
-  .room-main {
-    min-height: auto;
+  #chat-messages {
+    height: auto;
+    min-height: 120px;
+    max-height: 240px;
+  }
+
+  #video-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  #file-input,
+  #upload-btn,
+  #upload-progress {
+    grid-column: auto;
+  }
+
+  #video,
+  #yt-frame,
+  #yt-frame iframe {
+    max-height: 44vh;
+  }
+
+  #user-list li {
+    min-width: calc(50% - 5px);
   }
 }
 
@@ -778,7 +814,7 @@ body.room-mode #home-section {
 
   #container {
     width: min(100%, calc(100% - 24px));
-    padding-bottom: 120px;
+    padding: 16px 0 56px;
   }
 
   .hero-panel {
@@ -790,18 +826,31 @@ body.room-mode #home-section {
     grid-template-columns: 1fr;
   }
 
-  #video-inputs {
-    grid-template-columns: 1fr;
+  .room-shell {
+    max-width: none;
   }
 
-  #file-input,
-  #upload-btn,
-  #upload-progress {
-    grid-column: auto;
+  .room-title-display {
+    font-size: clamp(1.3rem, 8vw, 1.7rem);
+  }
+
+  .room-subtitle {
+    font-size: 0.68rem;
+    line-height: 1.5;
+  }
+
+  #video,
+  #yt-frame,
+  #yt-frame iframe {
+    max-height: 34vh;
   }
 
   #video-controls {
     flex-wrap: wrap;
     justify-content: flex-start;
+  }
+
+  #user-list li {
+    min-width: 100%;
   }
 }
