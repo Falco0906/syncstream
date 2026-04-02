@@ -53,7 +53,6 @@ animateParticles();
 const socket = io();
 let roomId = null;
 let username = null;
-let hostId = null;
 let ytPlayer = null;
 let ytReady = false;
 let ytSuppressEvent = false;
@@ -418,8 +417,9 @@ const syncController = {
   driftThreshold: 1,
   syncCooldownMs: 1000,
   currentState: 'paused',
-  hostSyncInterval: null,
-  hostSyncIntervalMs: 2000,
+  currentController: null,
+  lastControlTime: 0,
+  CONTROL_TIMEOUT: 2000,
 
   init(nextSocket, nextPlayerManager) {
     this.socket = nextSocket;
@@ -436,17 +436,17 @@ const syncController = {
         if (!this.suppressEvents) this.handleLocalSeek(time);
       }
     });
-
-    this.startHostSync();
   },
 
   handleLocalPlay() {
     this.currentState = 'playing';
+    this.takeControl();
     this.sendAction('play', this.playerManager.getCurrentTime());
   },
 
   handleLocalPause() {
     this.currentState = 'paused';
+    this.takeControl();
     this.sendAction('pause', this.playerManager.getCurrentTime());
   },
 
@@ -457,7 +457,13 @@ const syncController = {
       return;
     }
 
+    this.takeControl();
     this.sendAction('seek', currentTime);
+  },
+
+  takeControl() {
+    this.currentController = this.socket?.id || null;
+    this.lastControlTime = Date.now();
   },
 
   canSync(action) {
@@ -475,6 +481,9 @@ const syncController = {
     const activePlayer = this.playerManager.getActivePlayer();
     const currentPlayerTime = this.playerManager.getCurrentTime();
     const diff = typeof currentTime === 'number' ? Math.abs(currentPlayerTime - currentTime) : 0;
+
+    this.currentController = payload.senderId || payload.userId || null;
+    this.lastControlTime = Date.now();
 
     this.suppressEvents = true;
 
@@ -511,78 +520,21 @@ const syncController = {
 
   sendAction(action, time) {
     if (!this.socket || !roomId) return;
-    if (!this.isHost()) return;
     if (!this.canSync(action)) return;
+
+    const now = Date.now();
+    const isController = this.currentController === this.socket.id;
+    const isExpired = now - this.lastControlTime > this.CONTROL_TIMEOUT;
+
+    if (!isController && !isExpired) {
+      return;
+    }
 
     if (action === 'seek') {
       this.lastSyncTime = Date.now();
     }
 
     this.socket.emit('video-action', { action, currentTime: time });
-  },
-
-  isHost() {
-    return Boolean(this.socket?.id) && this.socket.id === hostId;
-  },
-
-  startHostSync() {
-    if (this.hostSyncInterval) {
-      window.clearInterval(this.hostSyncInterval);
-    }
-
-    this.hostSyncInterval = window.setInterval(() => {
-      if (!this.isHost() || !roomId) {
-        return;
-      }
-
-      this.socket.emit('sync-state', {
-        currentTime: this.playerManager.getCurrentTime(),
-        state: this.currentState
-      });
-    }, this.hostSyncIntervalMs);
-  },
-
-  applySyncState(payload) {
-    if (!payload) return;
-
-    const hostTime = typeof payload.currentTime === 'number' ? payload.currentTime : payload.time;
-    const diff = typeof hostTime === 'number'
-      ? Math.abs(this.playerManager.getCurrentTime() - hostTime)
-      : 0;
-    const activePlayer = this.playerManager.getActivePlayer();
-
-    this.suppressEvents = true;
-
-    try {
-      const applyState = () => {
-        if (payload.state === 'paused') {
-          this.currentState = 'paused';
-          this.playerManager.pause();
-          if (typeof hostTime === 'number' && diff > this.driftThreshold) {
-            this.playerManager.seek(hostTime);
-          }
-          return;
-        }
-
-        if (payload.state === 'playing') {
-          this.currentState = 'playing';
-          if (typeof hostTime === 'number' && diff > this.driftThreshold) {
-            this.playerManager.seek(hostTime);
-          }
-          this.playerManager.play();
-        }
-      };
-
-      if (typeof activePlayer?.withSuppressedEvents === 'function') {
-        activePlayer.withSuppressedEvents(applyState);
-      } else {
-        applyState();
-      }
-    } finally {
-      window.setTimeout(() => {
-        this.suppressEvents = false;
-      }, 0);
-    }
   }
 };
 
@@ -714,7 +666,6 @@ socket.on('user-count-update', count => {
   document.getElementById('user-count').textContent = count;
 });
 socket.on('room-state', data => {
-  hostId = data.hostId || null;
   updateUserList(data.users);
   if (data.currentVideo) {
     const media = normalizeMedia(data.currentVideo);
@@ -750,14 +701,6 @@ document.getElementById('skip-btn').onclick = () => {
 
 socket.on('video-sync', data => {
   syncController.applyRemoteAction(data);
-});
-
-socket.on('sync-state', data => {
-  syncController.applySyncState(data);
-});
-
-socket.on('new-host', data => {
-  hostId = data.hostId || null;
 });
 
 socket.on('video-loaded', videoInfo => {
