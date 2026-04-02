@@ -314,6 +314,11 @@ class YouTubePlayerAdapter {
         return;
       }
 
+      if (!this.isPlaying()) {
+        this.captureTimeSample();
+        return;
+      }
+
       const currentTime = this.player.getCurrentTime();
       const now = Date.now();
       const elapsedSeconds = (now - this.lastTimeSampleAt) / 1000;
@@ -411,6 +416,7 @@ const syncController = {
   lastSyncTime: 0,
   driftThreshold: 1,
   syncCooldownMs: 1000,
+  currentState: 'paused',
 
   init(nextSocket, nextPlayerManager) {
     this.socket = nextSocket;
@@ -430,19 +436,30 @@ const syncController = {
   },
 
   handleLocalPlay() {
+    this.currentState = 'playing';
     this.sendAction('play', this.playerManager.getCurrentTime());
   },
 
   handleLocalPause() {
+    this.currentState = 'paused';
     this.sendAction('pause', this.playerManager.getCurrentTime());
   },
 
   handleLocalSeek(time) {
     const currentTime = typeof time === 'number' ? time : this.playerManager.getCurrentTime();
+
+    if (this.currentState === 'paused') {
+      return;
+    }
+
     this.sendAction('seek', currentTime);
   },
 
-  canSync() {
+  canSync(action) {
+    if (action !== 'seek') {
+      return true;
+    }
+
     return Date.now() - this.lastSyncTime > this.syncCooldownMs;
   },
 
@@ -458,6 +475,24 @@ const syncController = {
     this.suppressEvents = true;
 
     try {
+      if (payload.action === 'pause') {
+        this.currentState = 'paused';
+
+        if (typeof activePlayer?.withSuppressedEvents === 'function') {
+          activePlayer.withSuppressedEvents(() => {
+            this.playerManager.pause();
+          });
+        } else {
+          this.playerManager.pause();
+        }
+
+        return;
+      }
+
+      if (this.currentState === 'paused' && (payload.action === 'play' || payload.action === 'seek')) {
+        return;
+      }
+
       if (payload.action === 'seek') {
         if (typeof currentTime !== 'number' || diff < this.driftThreshold) {
           return;
@@ -466,6 +501,8 @@ const syncController = {
 
       const applyAction = () => {
         if (payload.action === 'play') {
+          this.currentState = 'playing';
+
           if (isPlaying && diff < this.driftThreshold) {
             return;
           }
@@ -475,14 +512,6 @@ const syncController = {
           }
 
           this.playerManager.play();
-        }
-
-        if (payload.action === 'pause') {
-          if (typeof currentTime === 'number' && diff >= this.driftThreshold) {
-            this.playerManager.seek(currentTime);
-          }
-
-          this.playerManager.pause();
         }
 
         if (payload.action === 'seek' && typeof currentTime === 'number' && diff >= this.driftThreshold) {
@@ -504,9 +533,12 @@ const syncController = {
 
   sendAction(action, time) {
     if (!this.socket || !roomId) return;
-    if (!this.canSync()) return;
+    if (!this.canSync(action)) return;
 
-    this.lastSyncTime = Date.now();
+    if (action === 'seek') {
+      this.lastSyncTime = Date.now();
+    }
+
     this.socket.emit('video-action', { action, currentTime: time });
   }
 };
