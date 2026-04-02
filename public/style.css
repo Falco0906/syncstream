@@ -325,7 +325,10 @@ input::placeholder {
 
 .room-shell {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-areas:
+    "main chat"
+    "sidebar chat";
   gap: 18px;
   align-items: start;
 }
@@ -343,11 +346,12 @@ input::placeholder {
 }
 
 .archive-sidebar {
+  grid-area: sidebar;
   border-top: 6px solid var(--gold);
   border-radius: 20px;
   display: grid;
   align-content: start;
-  gap: 20px;
+  gap: 16px;
 }
 
 .sidebar-brand h2,
@@ -410,6 +414,7 @@ input::placeholder {
 }
 
 .room-main {
+  grid-area: main;
   border-top: 6px solid var(--red);
   border-radius: 20px;
   display: grid;
@@ -444,6 +449,7 @@ input::placeholder {
   margin-top: 10px;
   color: rgba(24, 23, 15, 0.58);
   font-size: 0.78rem;
+  max-width: 760px;
 }
 
 #video-section {
@@ -463,9 +469,18 @@ input::placeholder {
 }
 
 #file-input {
+  grid-column: 1 / 2;
   min-width: 180px;
   background: rgba(255, 251, 244, 0.92);
   padding: 14px;
+}
+
+#upload-btn {
+  grid-column: 2 / 3;
+}
+
+#upload-progress {
+  grid-column: 1 / -1;
 }
 
 #media-stage {
@@ -584,14 +599,16 @@ input::placeholder {
 }
 
 .chat-panel {
-  grid-column: 2;
+  grid-area: chat;
   border-top: 6px solid var(--gold);
   border-radius: 20px;
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 14px;
   min-width: 0;
-  margin-top: 18px;
+  position: sticky;
+  top: 92px;
+  max-height: calc(100vh - 120px);
 }
 
 .chat-head {
@@ -610,7 +627,7 @@ input::placeholder {
 
 #chat-messages {
   min-height: 220px;
-  max-height: 320px;
+  max-height: none;
   overflow-y: auto;
   padding: 6px;
   display: grid;
@@ -693,15 +710,35 @@ progress::-webkit-progress-value {
   font-size: 0.76rem;
 }
 
+body.room-mode .site-footer,
+body.room-mode .chrome-bar-mid,
+body.room-mode .chrome-bar-bottom {
+  display: none;
+}
+
+body.room-mode #container {
+  padding-bottom: 36px;
+}
+
+body.room-mode #home-section {
+  display: none;
+}
+
 @media (max-width: 1180px) {
   .room-shell {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "main"
+      "sidebar"
+      "chat";
   }
 
   .chat-panel {
     grid-column: auto;
     min-height: auto;
     margin-top: 0;
+    position: static;
+    max-height: none;
   }
 
   .archive-sidebar,
@@ -740,6 +777,12 @@ progress::-webkit-progress-value {
 
   #video-inputs {
     grid-template-columns: 1fr;
+  }
+
+  #file-input,
+  #upload-btn,
+  #upload-progress {
+    grid-column: auto;
   }
 
   #video-controls {

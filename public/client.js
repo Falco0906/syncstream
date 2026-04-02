@@ -734,6 +734,7 @@ newSyncBtn?.addEventListener('click', async () => {
 document.addEventListener('DOMContentLoaded', () => {
   roomId = getRoomIdFromUrl();
   if (roomId) {
+    document.body.classList.add('room-mode');
     homeSection?.classList.add('hidden');
     roomSection?.classList.remove('hidden');
     document.getElementById('current-room-id').textContent = roomId;
