@@ -750,9 +750,10 @@ body:not(.room-mode) .site-footer::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  width: 100vw;
   height: 38px;
+  transform: translateX(-50%);
   background: linear-gradient(90deg, var(--gold) 0 60%, var(--amber) 60% 80%, var(--red) 80% 100%);
 }
 
