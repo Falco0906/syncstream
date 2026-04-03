@@ -743,7 +743,7 @@ body:not(.room-mode) .site-footer {
   background: rgba(249, 244, 234, 0.96);
   backdrop-filter: blur(6px);
   border-radius: 0 0 20px 20px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 body:not(.room-mode) .site-footer::before {
