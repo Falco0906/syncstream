@@ -738,11 +738,11 @@ body:not(.room-mode) .site-footer {
   bottom: 0;
   transform: translateX(-50%);
   z-index: 12;
-  width: min(1180px, calc(100% - 32px));
-  padding: 38px 22px 22px;
-  background: rgba(249, 244, 234, 0.96);
+  width: 100vw;
+  padding: 38px max(22px, calc((100vw - 1180px) / 2 + 22px)) 22px;
+  background: var(--page-beige);
   backdrop-filter: blur(6px);
-  border-radius: 0 0 20px 20px;
+  border-radius: 0;
   overflow: visible;
 }
 
