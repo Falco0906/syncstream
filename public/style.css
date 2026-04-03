@@ -761,8 +761,7 @@ body:not(.room-mode) #container {
 }
 
 body.room-mode .site-footer,
-body.room-mode .chrome-bar-mid,
-body.room-mode .chrome-bar-bottom {
+body.room-mode .chrome-bar-mid {
   display: none;
 }
 
