@@ -96,6 +96,7 @@ progress {
   padding: 16px 24px;
   background: rgba(249, 244, 234, 0.9);
   backdrop-filter: blur(8px);
+  border-top: 1px solid var(--paper);
   border-bottom: none;
 }
 
@@ -768,7 +769,18 @@ body.room-mode .chrome-bar-bottom {
 
 body.room-mode #container {
   position: relative;
-  padding-bottom: 48px;
+  padding-bottom: 49px;
+}
+
+body.room-mode #container::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  width: 100vw;
+  height: 1px;
+  transform: translateX(-50%);
+  background: var(--paper);
 }
 
 body.room-mode #container::after {
