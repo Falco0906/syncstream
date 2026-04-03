@@ -1,6 +1,7 @@
 :root {
   --paper: #f6f0e2;
   --paper-soft: rgba(255, 250, 241, 0.94);
+  --page-beige: #f9f4ea;
   --ink: #231d12;
   --ink-soft: #72664c;
   --gold: #f5c400;
@@ -96,7 +97,7 @@ progress {
   padding: 16px 24px;
   background: rgba(249, 244, 234, 0.9);
   backdrop-filter: blur(8px);
-  border-top: 1px solid var(--paper);
+  border-top: 1px solid var(--page-beige);
   border-bottom: none;
 }
 
@@ -769,7 +770,7 @@ body.room-mode .chrome-bar-bottom {
 
 body.room-mode #container {
   position: relative;
-  padding-bottom: 49px;
+  padding-bottom: 13px;
 }
 
 body.room-mode #container::before {
@@ -780,7 +781,7 @@ body.room-mode #container::before {
   width: 100vw;
   height: 1px;
   transform: translateX(-50%);
-  background: var(--paper);
+  background: var(--page-beige);
 }
 
 body.room-mode #container::after {
