@@ -761,12 +761,25 @@ body:not(.room-mode) #container {
 }
 
 body.room-mode .site-footer,
-body.room-mode .chrome-bar-mid {
+body.room-mode .chrome-bar-mid,
+body.room-mode .chrome-bar-bottom {
   display: none;
 }
 
 body.room-mode #container {
-  padding-bottom: 36px;
+  position: relative;
+  padding-bottom: 48px;
+}
+
+body.room-mode #container::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 100vw;
+  height: 12px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, var(--gold) 0 57%, var(--amber) 57% 80%, var(--red) 80% 100%);
 }
 
 body.room-mode #home-section {
