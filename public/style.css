@@ -421,6 +421,10 @@ textarea {
   text-transform: uppercase;
 }
 
+.sidebar-secondary {
+  width: 100%;
+}
+
 .room-main {
   grid-area: main;
   border-top: 4px solid var(--red);
@@ -724,6 +728,21 @@ progress::-webkit-progress-value {
   gap: 20px;
   align-items: center;
   color: rgba(24, 23, 15, 0.62);
+}
+
+body:not(.room-mode) .site-footer {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  z-index: 12;
+  padding: 16px 0 0;
+  background: rgba(249, 244, 234, 0.92);
+  backdrop-filter: blur(6px);
+}
+
+body:not(.room-mode) #container {
+  padding-bottom: 150px;
 }
 
 .footer-brand {

@@ -75,6 +75,7 @@ const roomSection = document.getElementById('room-section');
 const video = document.getElementById('video');
 const copyRoomBtn = document.getElementById('copy-room-btn');
 const newSyncBtn = document.getElementById('new-sync-btn');
+const leaveRoomBtn = document.getElementById('leave-room-btn');
 const mediaStage = document.getElementById('media-stage');
 
 function setMediaStageLoaded(hasMedia) {
@@ -735,6 +736,10 @@ newSyncBtn?.addEventListener('click', async () => {
   const res = await fetch('/api/create-room');
   const { roomId } = await res.json();
   window.location.href = `/room/${roomId}`;
+});
+leaveRoomBtn?.addEventListener('click', () => {
+  socket.disconnect();
+  window.location.href = '/';
 });
 
 // On DOM Ready
