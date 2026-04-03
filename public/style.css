@@ -101,6 +101,10 @@ progress {
   border-bottom: none;
 }
 
+.home-accent-bar {
+  display: none;
+}
+
 .wordmark {
   font-size: 1.7rem;
   font-style: italic;
@@ -133,6 +137,27 @@ progress {
   display: grid;
   gap: 24px;
   padding: 20px 0 8px;
+}
+
+body:not(.room-mode) {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(247, 198, 74, 0.08), transparent 26%),
+    linear-gradient(180deg, #685230 0%, #554327 42%, #473720 100%);
+}
+
+body:not(.room-mode) .home-accent-bar {
+  display: block;
+  height: 50px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--gold) 0 60%, var(--amber) 60% 80%, var(--red) 80% 100%);
+}
+
+body:not(.room-mode) #top-bar {
+  background: rgba(247, 240, 226, 0.94);
+}
+
+body:not(.room-mode) #home-section {
+  padding-top: 26px;
 }
 
 .hero-band {
